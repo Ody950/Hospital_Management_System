@@ -1,32 +1,33 @@
-﻿using Hospital_Management_System.Models;
+﻿using Hospital_System.Data;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using Hospital_System.ViewModels;
 
-namespace Hospital_Management_System.Controllers
+namespace Hospital_System.Controllers
 {
-	public class HomeController : Controller
-	{
-		private readonly ILogger<HomeController> _logger;
+    public class HomeController : Controller
+    {
+        // Home Page
+        private readonly HospitalDbContext _context;
 
-		public HomeController(ILogger<HomeController> logger)
-		{
-			_logger = logger;
-		}
+        public HomeController(HospitalDbContext cotext)
+        {
+            _context = cotext;
+        }
+        public IActionResult Index()
+        {
+            int totalRoomCount = _context.Rooms.Count();
+            int totalDoctorCount = _context.Doctors.Count();
+            int totalUsersCount = _context.Users.Count();
 
-		public IActionResult Index()
-		{
-			return View();
-		}
+            var viewModel = new HomeViewModel
+            {
+                TotalRoomCount = totalRoomCount,
+                TotalDoctorCount = totalDoctorCount,
+                TotalUsersCount = totalUsersCount
+            };
 
-		public IActionResult Privacy()
-		{
-			return View();
-		}
+            return View(viewModel);
+        }
 
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-		public IActionResult Error()
-		{
-			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-		}
-	}
+    }
 }
